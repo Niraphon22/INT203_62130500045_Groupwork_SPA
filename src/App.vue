@@ -18,6 +18,7 @@
 
 #nav {
   padding: 20px;
+  font-size: 22px;
 }
 
 #nav a {
