@@ -1,8 +1,7 @@
 <template>
-  <div id="nav">
+  <div id="nav" class="bg-bluegray ">
     <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/listtodo">ListToDo</router-link>
+    <router-link to="/about">About</router-link> 
   </div>
   <router-view/>
 </template>
@@ -18,8 +17,7 @@
 }
 
 #nav {
-  padding: 30px;
-  color: 'blue-gray';
+  padding: 20px;
 }
 
 #nav a {
@@ -28,6 +26,6 @@
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: #FFFFFF;
 }
 </style>

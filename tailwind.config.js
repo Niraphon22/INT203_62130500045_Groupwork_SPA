@@ -6,9 +6,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'blue-gray': '#789AA2'
+        bluegray: '#789AA2',
+        favyellow: '#F4B921'
+      }
     }
-  }
   },
   variants: {
     extend: {},
