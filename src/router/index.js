@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-import ListTrees from '../views/ListTrees.vue'
+import ListTrees from '../views/ListToDo.vue'
 
 const routes = [
   {
@@ -17,8 +17,8 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: '/listtrees',
-    name: 'ListTrees',
+    path: '/listtodo',
+    name: 'ListToDo',
     component: ListTrees
   }
 ]
