@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen w-screen mx-auto flex flex-col items-center justify-center bg-gray-500">
+  <div class="h-screen w-full mx-auto flex flex-col items-center justify-center bg-gray-100">
     <div>
       <img alt="logo" src="../assets/logo.png" >
       <h2 class="text-3xl text-gray-900">Welcome to Time Manage!</h2>
