@@ -5,160 +5,50 @@
                 Form To List
             </h2>
 
-            <form @submit.prevent="submitForm">
+            <form @submit.prevent="listForm">
               <base-box>
                 <div class="flex flex-col justify-start">
                   <div>
                     <label class="label" for="date">Date: </label>
                     <base-input
                       id= "date"
-                      type= "text"/>
+                      type= "text"
+                      v-model="enterDate"
+                      @blur="validateDate" />
+                    <p v-if="invalidDateInput" class="text-red-500">
+                      Please enter date!
+                    </p>
                   </div>
 
                   <div class="flex flex-row mt-2">
                     <div>
-                    <label class="label" for="activity1">Activity1: </label>
+                    <label class="label" for="activity">Activity: </label>
                     <base-input
-                      id= "activity1"
-                      type= "text"/>
+                      id= "activity"
+                      type= "text"
+                      v-model="enterActivity"
+                      @blur="validateActivity" />
+                    <p v-if="invalidActivityInput" class="text-red-500">
+                      Please enter activity!
+                    </p>
                     </div>
                     <div class="ml-2">
-                    <label class="label" for="time1">Time: </label>
+                    <label class="label" for="time">Time: </label>
                     <base-input
-                      inputId= "time1"
+                      inputId= "time"
                       inputType= "text" />
                     </div>
                   </div>
 
-                  <div class="flex flex-row mt-2">
-                    <div>
-                    <label class="label" for="activity2">Activity2: </label>
-                    <base-input
-                      id= "activity2"
-                      type= "text"/>
-                    </div>
-                    <div class="ml-2">
-                    <label class="label" for="time2">Time: </label>
-                    <base-input
-                      inputId= "time2"
-                      inputType= "text" />
-                    </div>
-                  </div>
-
-                  <div class="flex flex-row mt-2">
-                    <div>
-                    <label class="label" for="activity3">Activity3: </label>
-                    <base-input
-                      id= "activity3"
-                      type= "text"/>
-                    </div>
-                    <div class="ml-2">
-                    <label class="label" for="time2">Time: </label>
-                    <base-input
-                      inputId= "time3"
-                      inputType= "text" />
-                    </div>
-                  </div>
-
-                  <div class="flex flex-row mt-2">
-                    <div>
-                    <label class="label" for="activity4">Activity4: </label>
-                    <base-input
-                      id= "activity4"
-                      type= "text"/>
-                    </div>
-                    <div class="ml-2">
-                    <label class="label" for="time4">Time: </label>
-                    <base-input
-                      inputId= "time4"
-                      inputType= "text" />
-                    </div>
-                  </div>
-
-                  <div class="flex flex-row mt-2">
-                    <div>
-                    <label class="label" for="activity5">Activity5: </label>
-                    <base-input
-                      id= "activity5"
-                      type= "text"/>
-                    </div>
-                    <div class="ml-2">
-                    <label class="label" for="time5">Time: </label>
-                    <base-input
-                      inputId= "time5"
-                      inputType= "text" />
-                    </div>
-                  </div>
-
-                  <div class="flex flex-row mt-2">
-                    <div>
-                    <label class="label" for="activity6">Activity6: </label>
-                    <base-input
-                      id= "activity6"
-                      type= "text"/>
-                    </div>
-                    <div class="ml-2">
-                    <label class="label" for="time6">Time: </label>
-                    <base-input
-                      inputId= "time6"
-                      inputType= "text" />
-                    </div>
-                  </div>
-    
-                  <div class="flex flex-row mt-2">
-                    <div>
-                    <label class="label" for="activity7">Activity7: </label>
-                    <base-input
-                      id= "activity7"
-                      type= "text"/>
-                    </div>
-                    <div class="ml-2">
-                    <label class="label" for="time7">Time: </label>
-                    <base-input
-                      inputId= "time7"
-                      inputType= "text" />
-                    </div>
-                  </div>
-
-                  <div class="flex flex-row mt-2">
-                    <div>
-                    <label class="label" for="activity8">Activity8: </label>
-                    <base-input
-                      id= "activity8"
-                      type= "text"/>
-                    </div>
-                    <div class="ml-2">
-                    <label class="label" for="time8">Time: </label>
-                    <base-input
-                      inputId= "time8"
-                      inputType= "text" />
-                    </div>
-                  </div>
-
-                  <div class="flex flex-row mt-2">
-                    <div>
-                    <label class="label" for="activity9">Activity9: </label>
-                    <base-input
-                      id= "activity9"
-                      type= "text"/>
-                    </div>
-                    <div class="ml-2">
-                    <label class="label" for="time9">Time: </label>
-                    <base-input
-                      inputId= "time9"
-                      inputType= "text" />
-                    </div>
-                  </div>
+                  
                 </div>
 
                 <div class="mt-4">
-                  <router-link to="/listtodo">
-                  <base-button
+                  <base-button @save="addNewSave"
                     buttonLabel="Save"
                     buttonColor="bg-favyellow"
                     textColor="text-gray-900"
                     class="text-xl"/>
-                  </router-link>
                 </div>
             </base-box>
             </form>  
@@ -166,11 +56,18 @@
 
         <!-- List To Do -->
         <div class="flex flex-col w-1/2 mt-4">
-            <h2 class="heading font-medium text-3xl">
+            <h2 class="font-medium text-3xl">
               List To Do
             </h2>
             <base-box>
-                <h1>This is base-box component</h1>
+                <ul v-for="result in listResult" :key="result.id">
+                  <li>
+                    <span>{{ result.date }} </span>
+                    <span>{{ result.time }} </span>
+                    <span>{{ result.activity }} </span>
+                    
+                  </li>
+                </ul>
             </base-box>
 
         </div>
@@ -186,6 +83,61 @@ export default {
   components: {
     BaseBox,
     BaseInput
+  },
+  emits: ['save'],
+  data() {
+    return {
+      enterDate: '',
+      enterActivity: '',
+      enterTime: '',
+      invalidDateInput: false,
+      invalidActivityInput: false,
+      invalidTimeInput: false,
+      listResult: [ ]
+    }
+  },
+  methods: {
+    listForm(){
+      this.invalidDateInput = this.enterDate === '' ? true : false
+      this.invalidActivityInput = this.enterActivity === '' ? true : false
+      this.invalidTimeInput = this.enterTime === '' ? true : false
+
+      const newSaved = {
+        date: this.enterDate,
+        activity: this.enterActivity,
+        time: this.enterTime
+      }
+      this.enterDate = ''
+      this.enterActivity = ''
+      this.enterTime = ''
+      this.$emit('save', newSaved)
+    },
+
+    validateDate(){
+      this.invalidDateInput = this.enterDate === '' ? true : false
+    },
+
+    validateActivity(){
+      this.invalidActivityInput = this.enterActivity === '' ? true : false
+    },
+
+    addNewSave(newSave){
+      this.listResult.id = new Date().toISOString()
+      this.listResult.date = newSave.deactivated() 
+      this.listResult.activity = newSave.activity
+      this.listResult.time = newSave.time
+      this.listResult.push(newSave)
+    
+    },
+
+    async fetchListResult(){
+      const url = await fetch('http://localhost:5000/listResult')
+      const info = await url.json()
+      return info
+    }
+  },
+  async created(){
+    this.listResult = await this.fetchListResult()
   }
 }
 </script>

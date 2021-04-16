@@ -1,0 +1,6 @@
+{
+    "listResult": [
+      { "id": 1, "activity": "Do homework","date": "16/04/2021", "time": "10 am." },
+      { "id": 2, "activity": "Read content about SQL","date": "16/04/2021", "time": "2 pm" }
+    ]
+  }
