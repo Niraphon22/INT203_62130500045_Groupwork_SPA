@@ -4,7 +4,7 @@
             <h2 class="heading font-medium text-3xl">
                 Form To List
             </h2>
-            <list-form @save="addNewSave"> </list-form>
+            <list-form @list-save="addNewSave"> </list-form>
 
         </div>
 
@@ -14,12 +14,28 @@
               List To Do
             </h2>
             <base-box>
-                <ul class="text-left ml-4" v-for="result in listResult" :key="result.id">
+                <ul class="text-left ml-4" v-for="result in listResults" :key="result.id">
+                  <base-box>
                   <li>
                     <span>{{ result.date }} </span> 
                     <span class="ml-4">{{ result.time }} </span>                    
                     <span class="ml-8">{{ result.activity }} </span>                   
                   </li>
+                  <div class="flex flex-row">
+                    <base-button
+                      @click="editList"
+                      buttonLabel="Edit"
+                      buttonColor="bg-favyellow"
+                      textColor="text-gray-900"
+                      ></base-button>
+                    <base-button
+                      @click="deleteList($event, result.id)"
+                      buttonLabel="Delete"
+                      buttonColor="bg-red-500"
+                      textColor="text-gray-900"
+                      ></base-button>
+                  </div>
+                  </base-box>
                 </ul>
             </base-box>
         </div>
@@ -38,27 +54,61 @@ export default {
   },
   data() {
     return {
-      listResult: [ ]
+      url: ' http://localhost:5000/listResults',
+      errorMessage: null,
+      listResults: [ ]
     }
   },
   methods: {
-    addNewSave(newSave){
-      this.listResult.id = new Date().toISOString()
-      this.listResult.date = newSave.date
-      this.listResult.activity = newSave.activity
-      this.listResult.time = newSave.time
-      this.listResult.push(newSave)
-    
+    async addNewSave(newSave){
+      try {
+      const rest =await fetch(this.url, {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          date: newSave.date,
+          time: newSave.time,
+          activity: newSave.activity
+        }),
+      });
+      const info = await rest.json();
+      this.listResults = [...this.listResults, info];    
+    } catch (error) {
+      console.log(`Could not add ${error}`);
+    }
+    this.enterDate = ''
+    this.enterActivity = ''
+    this.enterTime = ''
     },
 
     async fetchListResult(){
-      const url = await fetch('http://localhost:5000/listResult')
-      const info = await url.json()
-      return info
+      try{
+        const rest = await fetch(this.url);
+        const info = await rest.json();
+        return info;
+      } catch (error) {
+        console.log(`Could not get! ${error}`);
+      }
+    },
+
+    async deleteList(label, id) {
+      try{
+        await fetch(`${this.url}/${id}`, {
+          method: 'DELETE'
+        })
+        this.listResults = this.listResults.filter(
+          (list) => list.id !== id
+        )
+      }catch (error) {
+        console.log(`Could not delete list! ${error}`)
     }
-  },
+  }
+},
+
   async created(){
-    this.listResult = await this.fetchListResult()
+    this.listResults = await this.fetchListResult();
   }
 }
 </script>

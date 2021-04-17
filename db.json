@@ -1,6 +1,16 @@
 {
-    "listResult": [
-      { "id": 1, "date": "16/04/2021", "activity": "Do homework", "time": "10 am." },
-      { "id": 2, "date": "16/04/2021", "activity": "Read content about SQL", "time": "2 pm" }
-    ]
-  }
+  "listResults": [
+    {
+      "id": 1,
+      "date": "16/04/2021",
+      "activity": "Do homework",
+      "time": "10 am."
+    },
+    {
+      "id": 2,
+      "date": "16/04/2021",
+      "activity": "Do homework",
+      "time": "4 pm."
+    }
+  ]
+}

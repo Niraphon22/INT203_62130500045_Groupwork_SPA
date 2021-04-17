@@ -7,9 +7,9 @@
                     <label class="label" for="date">Date: </label>
                     <base-input
                       id= "date"
-                      type= "text"
-                      v-model="enterDate"
+                      v-model.trim="enterDate"
                       @blur="validateDate" />
+                      
                     <p v-if="invalidDateInput" class="text-red-500">
                       Please enter date!
                     </p>
@@ -20,8 +20,7 @@
                     <label class="label" for="activity">Activity: </label>
                     <base-input
                       id= "activity"
-                      type= "text"
-                      v-model="enterActivity"
+                      v-model.trim="enterActivity"
                       @blur="validateActivity" />
                     <p v-if="invalidActivityInput" class="text-red-500">
                       Please enter activity!
@@ -30,9 +29,8 @@
                     <div class="ml-2">
                     <label class="label" for="time">Time: </label>
                     <base-input
-                      inputId= "time"
-                      inputType= "text"
-                      v-model="enterTime"
+                      id= "time"
+                      v-model.trim="enterTime"
                       @blur="validateTime" />
                     </div>
                   </div>                 
@@ -61,7 +59,7 @@ export default {
     BaseBox,
     BaseInput
   },
-  emits: ['save'],
+  emits: ['list-save'],
   data() {
     return {
       enterDate: '',
@@ -78,6 +76,13 @@ export default {
       this.invalidActivityInput = this.enterActivity === '' ? true : false
       this.invalidTimeInput = this.enterTime === '' ? true : false
 
+      console.log(`date value: ${this.enterDate}`)
+      console.log(`activity value: ${this.enterActivity}`)
+      console.log(`time value: ${this.enterTime}`)
+      console.log(`invalid date: ${this.invalidDateInput}`)
+      console.log(`invalid activity: ${this.invalidActivityInput}`)
+      console.log(`invalid time: ${this.invalidTimeInput}`)
+
       const newSaved = {
         date: this.enterDate,
         activity: this.enterActivity,
@@ -86,20 +91,24 @@ export default {
       this.enterDate = ''
       this.enterActivity = ''
       this.enterTime = ''
-      this.$emit('save', newSaved)
+      this.$emit('list-save', newSaved)
     },
+
 
     validateDate(){
       this.invalidDateInput = this.enterDate === '' ? true : false
+      console.log(`date: ${this.invalidDateInput}`)
     },
 
     validateActivity(){
       this.invalidActivityInput = this.enterActivity === '' ? true : false
+      console.log(`activity: ${this.invalidActivityInput}`)
     },
 
     validateTime(){
       this.invalidTimeInput = this.enterTime === '' ? true : false
+      console.log(`time: ${this.invalidTimeInput}`)
     }
   }
-}
+};
 </script>
