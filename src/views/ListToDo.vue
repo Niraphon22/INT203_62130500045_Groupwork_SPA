@@ -4,8 +4,16 @@
             <h2 class="heading font-medium text-3xl">
                 Form To List
             </h2>
-            <list-form @list-save="addNewSave"> </list-form>
+            <list-form
+              v-if="isEdit"
+              :oldId="oldId"
+              :oldDate="oldDate"
+              :oldActivity="oldActivity"
+              :oldTime="oldTime"
+              @list-save="editSave"
+            ></list-form>
 
+            <list-form v-else @list-save="addNewSave"> </list-form>
         </div>
 
         <!-- List To Do -->
@@ -23,13 +31,13 @@
                   </li>
                   <div class="flex flex-row">
                     <base-button
-                      @click="editList"
+                      @btn-click="editList($event, result.id, result.date, result.activity, result.time)"
                       buttonLabel="Edit"
                       buttonColor="bg-favyellow"
                       textColor="text-gray-900"
                       ></base-button>
                     <base-button
-                      @click="deleteList($event, result.id)"
+                      @btn-click="deleteList($event, result.id)"
                       buttonLabel="Delete"
                       buttonColor="bg-red-500"
                       textColor="text-gray-900"
@@ -56,7 +64,11 @@ export default {
     return {
       url: ' http://localhost:5000/listResults',
       errorMessage: null,
-      listResults: [ ]
+      oldId: '',
+      oldActivity: '',
+      oldTime: '',
+      listResults: [ ],
+      isEdit: false
     }
   },
   methods: {
@@ -93,7 +105,7 @@ export default {
       }
     },
 
-    async deleteList(label, id) {
+    async deleteList(passinginfo, id) {
       try{
         await fetch(`${this.url}/${id}`, {
           method: 'DELETE'
@@ -104,7 +116,41 @@ export default {
       }catch (error) {
         console.log(`Could not delete list! ${error}`)
     }
-  }
+  },
+
+    editList(passingData, editId, editDate, editActivity, editTime){
+      this.isEdit = true
+      this.oldId = editId
+      this.oldDate = editDate
+      this.oldActivity = editActivity
+      this.oldTime = editTime
+    },
+
+    async editSave(editingData) {
+      const rest = await fetch(`${this.url}/${editingData.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          date: editingData.date,
+          activity: editingData.activity,
+          time: editingData.time
+        })
+      })
+      const info = await rest.json()
+      this.listResults = this.listResults.map((list) =>
+        list.id === info.id
+          ? {
+              ...list,
+              date: info.date,
+              activity: info.activity,
+              time: info.time
+            }
+          : list
+      )
+      this.isEdit = false
+    }
 },
 
   async created(){

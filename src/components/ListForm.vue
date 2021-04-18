@@ -2,14 +2,14 @@
     <div>
         <form @submit.prevent="listForm">
               <base-box>
-                <div class="flex flex-col justify-start">
+                <div class="flex flex-col justify-start overflow-y-auto" >
                   <div>
                     <label class="label" for="date">Date: </label>
                     <base-input
                       id= "date"
                       v-model.trim="enterDate"
                       @blur="validateDate" />
-                      
+
                     <p v-if="invalidDateInput" class="text-red-500">
                       Please enter date!
                     </p>
@@ -30,14 +30,13 @@
                     <label class="label" for="time">Time: </label>
                     <base-input
                       id= "time"
-                      v-model.trim="enterTime"
-                      @blur="validateTime" />
+                      v-model.trim="enterTime" />
                     </div>
                   </div>                 
                 </div>
 
                 <div class="mt-4">
-                  <base-button
+                  <base-button 
                     buttonLabel="Save"
                     buttonColor="bg-favyellow"
                     textColor="text-gray-900"
@@ -51,20 +50,42 @@
 
 <script>
 // @ is an alias to /src
-import BaseBox from "../components/BaseBox.vue";
 import BaseInput from "../components/BaseInput.vue";
 export default {
   name: 'ListForm',
   components: {
-    BaseBox,
     BaseInput
+  },
+
+  props: {
+    oldId: {
+      type: Number,
+      required: false,
+      default: null
+    },
+    oldDate: {
+      type: String,
+      required: false,
+      defualt: ''
+    },
+    oldActivity: {
+      type: String,
+      required: false,
+      defualt: ''
+    },
+    oldTime: {
+      type: String,
+      required: false,
+      defualt: ''
+    }
   },
   emits: ['list-save'],
   data() {
     return {
-      enterDate: '',
-      enterActivity: '',
-      enterTime: '',
+      id: this.oldId,
+      enterDate: this.oldDate,
+      enterActivity: this.oldActivity,
+      enterTime: this.oldTime,
       invalidDateInput: false,
       invalidActivityInput: false,
       invalidTimeInput: false
@@ -83,15 +104,19 @@ export default {
       console.log(`invalid activity: ${this.invalidActivityInput}`)
       console.log(`invalid time: ${this.invalidTimeInput}`)
 
-      const newSaved = {
-        date: this.enterDate,
-        activity: this.enterActivity,
-        time: this.enterTime
+      if (!this.invalidDateInput && !this.invalidActivityInput) {
+        let newListSaved = {
+          id: this.id,
+          date: this.enterDate,
+          activity: this.enterActivity,
+          time: this.enterTime
+        }
+        this.id = ''
+        this.enterDate = ''
+        this.enterActivity = ''
+        this.enterTime = ''
+         this.$emit('list-save', newListSaved)
       }
-      this.enterDate = ''
-      this.enterActivity = ''
-      this.enterTime = ''
-      this.$emit('list-save', newSaved)
     },
 
 
@@ -103,11 +128,6 @@ export default {
     validateActivity(){
       this.invalidActivityInput = this.enterActivity === '' ? true : false
       console.log(`activity: ${this.invalidActivityInput}`)
-    },
-
-    validateTime(){
-      this.invalidTimeInput = this.enterTime === '' ? true : false
-      console.log(`time: ${this.invalidTimeInput}`)
     }
   }
 };
