@@ -202,7 +202,7 @@ export default {
           method: 'DELETE'
         })
         this.listResults = this.listResults.filter(
-          (list) => list.deleteId !== deleteId
+          (list) => list.id !== deleteId
         )
       }catch (error) {
         console.log(`Could not delete list! ${error}`)
