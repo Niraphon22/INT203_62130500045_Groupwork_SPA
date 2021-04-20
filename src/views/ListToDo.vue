@@ -1,19 +1,56 @@
 <template>
   <div class="flex flex-row justify-around space-x-4">
         <div class="flex flex-col w-1/2 mt-4">
-            <h2 class="heading font-medium text-3xl">
+            <h2 class="font-medium text-3xl">
                 Form To List
             </h2>
-            <list-form
-              v-if="isEdit"
-              :oldId="oldId"
-              :oldDate="oldDate"
-              :oldActivity="oldActivity"
-              :oldTime="oldTime"
-              @list-save="editSave"
-            ></list-form>
+            <form @submit.prevent="listForm">
+              <base-box>
+                <div class="flex flex-col justify-start overflow-y-auto" >
+                  <div>
+                    <label for="date">Date: </label>
+                    <input
+                      type= "text" class="font-medium rounded-md border-2 border-bluegray border-opacity-75y px-4 py-2 mb-0.5"
+                      id= "date"
+                      v-model.trim="enterDate"
+                      @blur="validateDate" />
 
-            <list-form v-else @list-save="addNewSave"> </list-form>
+                    <p v-if="invalidDateInput" class="text-red-500">
+                      Please enter date!
+                    </p>
+                  </div>
+
+                  <div class="flex flex-row mt-2">
+                    <div>
+                    <label for="activity">Activity: </label>
+                    <input
+                      type= "text" class="font-medium rounded-md border-2 border-bluegray border-opacity-75y px-4 py-2 mb-0.5"
+                      id= "activity"
+                      v-model.trim="enterActivity"
+                      @blur="validateActivity" />
+                    <p v-if="invalidActivityInput" class="text-red-500">
+                      Please enter activity!
+                    </p>
+                    </div>
+                    <div class="ml-2">
+                    <label for="time">Time: </label>
+                    <input
+                      type= "text" class="font-medium rounded-md border-2 border-bluegray border-opacity-75y px-4 py-2 mb-0.5"
+                      id= "time"
+                      v-model.trim="enterTime" />
+                    </div>
+                  </div>                 
+                </div>
+
+                <div class="mt-4">
+                  <base-button 
+                    buttonLabel="Save"
+                    buttonColor="bg-favyellow"
+                    textColor="text-gray-900"
+                    class="text-xl"/>
+                </div>
+            </base-box>
+            </form>
         </div>
 
         <!-- List To Do -->
@@ -22,22 +59,22 @@
               List To Do
             </h2>
             <base-box>
-                <ul class="text-left ml-4" v-for="result in listResults" :key="result.id">
+                <ul class="text-left ml-4" v-for="list in listResults" :key="list.id">
                   <base-box>
                   <li>
-                    <span>{{ result.date }} </span> 
-                    <span class="ml-4">{{ result.time }} </span>                    
-                    <span class="ml-8">{{ result.activity }} </span>                   
+                    <span>{{ list.date }} </span> 
+                    <span class="ml-4">{{ list.time }} </span>                    
+                    <span class="ml-8">{{ list.activity }} </span>                   
                   </li>
                   <div class="flex flex-row">
                     <base-button
-                      @btn-click="editList($event, result.id, result.date, result.activity, result.time)"
+                      @btn-click="showInfo(list)"
                       buttonLabel="Edit"
                       buttonColor="bg-favyellow"
                       textColor="text-gray-900"
                       ></base-button>
                     <base-button
-                      @btn-click="deleteList($event, result.id)"
+                      @btn-click="deleteList(list.id)"
                       buttonLabel="Delete"
                       buttonColor="bg-red-500"
                       textColor="text-gray-900"
@@ -52,26 +89,80 @@
 
 <script>
 // @ is an alias to /src
-import BaseBox from "../components/BaseBox.vue";
-import ListForm from "../components/ListForm.vue";
+
 export default {
   name: 'ListToDo',
   components: {
-    BaseBox,
-    ListForm
+
   },
   data() {
     return {
       url: ' http://localhost:5000/listResults',
-      errorMessage: null,
-      oldId: '',
-      oldActivity: '',
-      oldTime: '',
       listResults: [ ],
-      isEdit: false
+      isEdit: false,
+      editId: '',
+      enterDate: '',
+      enterActivity: '',
+      enterTime: '',
+      invalidDateInput: false,
+      invalidActivityInput: false,
+      invalidTimeInput: false
+
     }
   },
   methods: {
+    listForm(){
+      this.invalidDateInput = this.enterDate === '' ? true : false
+      this.invalidActivityInput = this.enterActivity === '' ? true : false
+      this.invalidTimeInput = this.enterTime === '' ? true : false
+
+      console.log(`date value: ${this.enterDate}`)
+      console.log(`activity value: ${this.enterActivity}`)
+      console.log(`time value: ${this.enterTime}`)
+      console.log(`invalid date: ${this.invalidDateInput}`)
+      console.log(`invalid activity: ${this.invalidActivityInput}`)
+      console.log(`invalid time: ${this.invalidTimeInput}`)
+
+      if (this.enterDate !== '' && this.enterActivity !== '' && this.enterTime !== ''){
+        
+        if (this.isEdit){
+          this.editSave({
+          id: this.editId,
+          date: this.enterDate,
+          activity: this.enterActivity,
+          time: this.enterTime
+        })
+      } else {
+        this.addNewSave({
+          date: this.enterDate,
+          activity: this.enterActivity,
+          time: this.enterTime
+        })
+      }
+    }
+    this.enterDate=''
+    this.enterActivity=''
+    this.enterTime = ''
+    },
+
+    validateDate(){
+      this.invalidDateInput = this.enterDate === '' ? true : false
+      console.log(`date: ${this.invalidDateInput}`)
+    },
+
+    validateActivity(){
+      this.invalidActivityInput = this.enterActivity === '' ? true : false
+      console.log(`activity: ${this.invalidActivityInput}`)
+    },
+
+    showInfo(oldSave){
+      this.isEdit = true
+      this.editId = oldSave.id
+      this.enterDate = oldSave.date
+      this.enterActivity = oldSave.activity
+      this.enterTime = oldSave.time
+    },
+
     async addNewSave(newSave){
       try {
       const rest =await fetch(this.url, {
@@ -105,42 +196,35 @@ export default {
       }
     },
 
-    async deleteList(passinginfo, id) {
+    async deleteList(deleteId) {
       try{
-        await fetch(`${this.url}/${id}`, {
+        await fetch(`${this.url}/${deleteId}`, {
           method: 'DELETE'
         })
         this.listResults = this.listResults.filter(
-          (list) => list.id !== id
+          (list) => list.deleteId !== deleteId
         )
       }catch (error) {
         console.log(`Could not delete list! ${error}`)
     }
   },
 
-    editList(passingData, editId, editDate, editActivity, editTime){
-      this.isEdit = true
-      this.oldId = editId
-      this.oldDate = editDate
-      this.oldActivity = editActivity
-      this.oldTime = editTime
-    },
-
-    async editSave(editingData) {
-      const rest = await fetch(`${this.url}/${editingData.id}`, {
+    async editSave(editingSave) {
+      try{
+      const rest = await fetch(`${this.url}/${editingSave.id}`, {
         method: 'PUT',
         headers: {
           'Content-type': 'application/json'
         },
         body: JSON.stringify({
-          date: editingData.date,
-          activity: editingData.activity,
-          time: editingData.time
+          date: editingSave.date,
+          activity: editingSave.activity,
+          time: editingSave.time
         })
       })
       const info = await rest.json()
       this.listResults = this.listResults.map((list) =>
-        list.id === info.id
+        list.id === editingSave.id
           ? {
               ...list,
               date: info.date,
@@ -150,8 +234,15 @@ export default {
           : list
       )
       this.isEdit = false
+      this.editId = ''
+      this.enterDate = ''
+      this.enterActivity = ''
+      this.enterTime = ''
+    } catch (error) {
+      console.log(`Could not edit list! ${error}`)
     }
-},
+  }
+  },
 
   async created(){
     this.listResults = await this.fetchListResult();
